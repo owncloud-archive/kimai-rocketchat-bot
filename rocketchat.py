@@ -345,6 +345,9 @@ class RocketChatBot():
         self.username = user
         self.password = password
         self.server = server
+        self.ssl = ssl
+        self.token = None
+        self.userId = None
         self.debug = True
 
         self._prefixs = []
@@ -376,6 +379,8 @@ class RocketChatBot():
 
     def _logged_in(self, data):
         print('[+] rocketchat: logged in')
+        self.token = data['token']
+        self.userId = data['id']
         print(data)
 
     def _failed(self, collection, data):
