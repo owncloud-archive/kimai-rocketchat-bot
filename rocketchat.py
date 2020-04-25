@@ -1,5 +1,6 @@
 import time
 import datetime
+import requests
 
 from DDPClient import DDPClient
 
@@ -467,3 +468,44 @@ class RocketChatBot():
 
     def sendMessage(self, id, message):
         self.client.call('sendMessage', [{'msg': message, 'rid': id}], self.cb)
+
+    def post(self, method, params=None):
+        headers = {
+            'X-User-Id': self.userId,
+            'X-Auth-Token': self.token,
+            'Content-type': 'application/json',
+        }
+        if self.ssl:
+            protocol = 'https://'
+        else:
+            protocol = 'http://'
+
+        res = requests.post(
+            protocol + self.server + "/api/v1/" + method, 
+            json = params,
+            headers = headers
+        )
+        data = {"response": res, "data": None}
+        if res and res.status_code == 200 and 'json' in res.headers.get('Content-Type'):
+            data["data"] = res.json()
+        return data
+
+    def get(self, method, params=None):
+        headers = {
+            'X-User-Id': self.userId,
+            'X-Auth-Token': self.token,
+        }
+        if self.ssl:
+            protocol = 'https://'
+        else:
+            protocol = 'http://'
+
+        res = requests.get(
+            protocol + self.server + "/api/v1/" + method, 
+            params,
+            headers = headers
+        )
+        data = {"response": res, "data": None}
+        if res and res.status_code == 200 and 'json' in res.headers.get('Content-Type'):
+            data["data"] = res.json()
+        return data
